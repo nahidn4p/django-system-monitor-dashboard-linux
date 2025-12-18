@@ -2,6 +2,8 @@
 
 A beautiful Django-based live system monitoring dashboard for Linux systems with scheduled CPU/RAM stress testing.
 
+DEMO : https://c956ffb4475a.ngrok-free.app/
+
 ## Features
 
 - 🖥️ **Real-time System Monitoring**: Live updates of CPU, Memory, Disk, Network, and Process information

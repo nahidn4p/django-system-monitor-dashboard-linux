@@ -1,0 +1,4 @@
+Django==4.2.26
+psutil==5.9.8
+django-crontab==0.7.1
+

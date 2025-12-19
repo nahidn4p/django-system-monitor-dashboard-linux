@@ -150,6 +150,15 @@ If cron jobs are not working:
 2. Check that cron service is running: `sudo service cron status`
 3. Verify cron jobs: `python manage.py crontab show`
 
+## Docker Deployment
+
+See [DOCKER.md](DOCKER.md) for detailed Docker deployment instructions.
+
+**Quick answer**: By default, Docker shows **container data**. To show **host system data**, use:
+```bash
+docker-compose -f docker-compose.host.yml up
+```
+
 ## License
 
 This project is open source and available for personal and educational use.

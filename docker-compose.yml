@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
+    # Option 1: Show CONTAINER data (default - isolated)
+    # No special volumes needed
+    
+    # Option 2: Show HOST system data (uncomment below)
+    # privileged: true
+    # volumes:
+    #   - ./db.sqlite3:/app/db.sqlite3
+    #   - /proc:/host/proc:ro
+    #   - /sys:/host/sys:ro
+    #   - /dev:/host/dev:ro
+    # environment:
+    #   - HOST_PROC=/host/proc
+    #   - HOST_SYS=/host/sys
+

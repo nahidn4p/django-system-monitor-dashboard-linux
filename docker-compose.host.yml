@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    # Note: When using network_mode: host, ports mapping is ignored
+    # Access via http://localhost:8000 or http://127.0.0.1:8000
+    privileged: true
+    pid: host  # Use host's process namespace - see all host processes
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
+    # Network mode host to see host network stats
+    # This makes the container use the host's network stack
+    network_mode: host
+    # Alternative: Use regular port mapping (comment out network_mode and pid above)
+    # ports:
+    #   - "8000:8000"
+

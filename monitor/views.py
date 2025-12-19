@@ -1,10 +1,15 @@
 import json
+import os
 import psutil
 import platform
 from datetime import datetime
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
+
+# Check if we're reading from host system (Docker with mounted volumes)
+HOST_PROC = os.environ.get('HOST_PROC', '/proc')
+IS_CONTAINER = os.path.exists('/.dockerenv') or os.path.exists('/proc/1/cgroup') and 'docker' in open('/proc/1/cgroup').read()
 
 
 def dashboard(request):

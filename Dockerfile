@@ -20,8 +20,11 @@ RUN mkdir -p /app/data && chmod 777 /app/data
 # Collect static files (ignore errors if migrations haven't run yet)
 RUN python manage.py collectstatic --noinput || true
 
+# Set environment variable to ensure Python output is not buffered
+ENV PYTHONUNBUFFERED=1
+
 # Expose port
 EXPOSE 8000
 
 # Run migrations and start server
-CMD python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]

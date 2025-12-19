@@ -11,8 +11,8 @@ services:
       - ./db.sqlite3:/app/db.sqlite3
     # Network mode host to see host network stats
     # This makes the container use the host's network stack
-    network_mode: host
+    # network_mode: host
     # Alternative: Use regular port mapping (comment out network_mode and pid above)
-    # ports:
-    #   - "8000:8000"
+    ports:
+      - "8000:8000"
 

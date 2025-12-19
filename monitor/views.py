@@ -45,15 +45,26 @@ def system_info(request):
         uptime = datetime.now() - boot_time
         
         # Process Information
+        # Try to read from host /proc if available (for Docker host monitoring)
         processes = []
-        for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent', 'status']):
-            try:
-                processes.append(proc.info)
-            except (psutil.NoSuchProcess, psutil.AccessDenied):
-                pass
+        try:
+            # Check if we can access host processes via mounted /proc
+            # This works when Docker is run with --pid=host or /proc is mounted
+            for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent', 'status']):
+                try:
+                    proc_info = proc.info
+                    # Get fresh CPU percent (non-blocking)
+                    proc_info['cpu_percent'] = proc.cpu_percent(interval=None) or 0
+                    processes.append(proc_info)
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                    pass
+        except Exception as e:
+            # Fallback if process iteration fails
+            print(f"Warning: Could not read processes: {e}")
+            processes = []
         
         # Sort by CPU usage and get top 10
-        processes = sorted(processes, key=lambda x: x['cpu_percent'] or 0, reverse=True)[:10]
+        processes = sorted(processes, key=lambda x: x.get('cpu_percent', 0) or 0, reverse=True)[:10]
         
         data = {
             'timestamp': datetime.now().isoformat(),

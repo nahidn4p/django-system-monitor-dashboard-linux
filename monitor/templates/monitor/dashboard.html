@@ -400,14 +400,22 @@
         // Update progress bar
         function updateProgressBar(id, percent) {
             const progress = document.getElementById(id);
-            progress.style.width = percent + '%';
-            progress.textContent = Math.round(percent) + '%';
+            if (!progress) {
+                console.error('Progress bar element not found:', id);
+                return;
+            }
+            
+            // Ensure percent is a valid number and clamp between 0-100
+            const percentValue = Math.max(0, Math.min(100, parseFloat(percent) || 0));
+            
+            progress.style.width = percentValue + '%';
+            progress.textContent = Math.round(percentValue) + '%';
             
             // Update color based on usage
             progress.classList.remove('warning', 'danger');
-            if (percent > 80) {
+            if (percentValue > 80) {
                 progress.classList.add('danger');
-            } else if (percent > 60) {
+            } else if (percentValue > 60) {
                 progress.classList.add('warning');
             }
         }

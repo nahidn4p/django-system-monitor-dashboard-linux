@@ -21,23 +21,53 @@
    - **Build Context**: `.` (root directory)
 
 4. **Port Configuration:**
-   - **Port**: `8000`
-   - **HTTP**: Enable this to get automatic HTTPS/domain
+   - **Port**: `8000` (This is the internal port Django listens on)
+   - **HTTP**: Enable this to get automatic HTTPS/domain via Traefik (optional - can skip if no domain)
+   - **Note**: 
+     - If you enable HTTP: Traefik will route traffic from port 80 (HTTP) and 443 (HTTPS) to Django on port 8000
+     - If you don't enable HTTP: Access Django directly via Dokploy's port mapping or IP:8000
 
-5. **Environment Variables** (Optional but recommended):
+5. **Environment Variables** (Optional):
    ```
+   # For IP-based access (no domain), you can skip DJANGO_ALLOWED_HOSTS
+   # Django will allow all hosts in DEBUG mode
+   
+   # If you have a domain:
    DJANGO_ALLOWED_HOSTS=your-domain.com,localhost,127.0.0.1
+   
+   # For production (recommended):
    DJANGO_SECRET_KEY=your-secret-key-here
    DEBUG=False
    ```
+   
+   **Note**: 
+   - Without a domain: Django allows all hosts when `DEBUG=True` (default), so you can access via IP
+   - With a domain: Set `DJANGO_ALLOWED_HOSTS` to your domain name
+   - The application is configured to work with Traefik proxy headers when behind a proxy
 
 6. **Click "Deploy"**
 
 ### 3. Access Your Application
+
+**Without a domain (IP-based access):**
+- Access via: `http://your-server-ip:8000` (if HTTP is disabled)
+- Or via Dokploy's port mapping if configured
+
+**With a domain (HTTP enabled):**
 - Dokploy will provide a URL (or use your custom domain)
-- Access the dashboard at: `http://your-domain/`
+- Access the dashboard at: `http://your-domain/` or `https://your-domain/`
 
 ## Important Notes
+
+### Port Configuration with Traefik
+
+**How it works:**
+- **Django** listens on port **8000** inside the container (configured in Dockerfile)
+- **Traefik** (Dokploy's reverse proxy) listens on port **80** (HTTP) and **443** (HTTPS)
+- Traefik automatically routes external traffic (port 80/443) to your Django container (port 8000)
+- When you enable "HTTP" in Dokploy, Traefik handles SSL termination and routing
+
+**You don't need to configure port 80** - just set the container port to **8000** and enable HTTP in Dokploy. Traefik handles the rest!
 
 ### Database Storage
 - The SQLite database is stored in `/app/data/db.sqlite3` inside the container

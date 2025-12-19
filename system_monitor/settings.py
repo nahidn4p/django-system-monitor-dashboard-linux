@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,23 @@ SECRET_KEY = 'django-insecure-%bgu_1-#%v74s-ucqd4avyqnn!^jt-s1g8=^nw(xn%bi)qn+cq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+# Allow ALLOWED_HOSTS to be configured via environment variable (for Dokploy/Traefik)
+ALLOWED_HOSTS_ENV = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
+if ALLOWED_HOSTS_ENV:
+    ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_ENV.split(',')]
+elif DEBUG:
+    # In debug mode, allow all hosts (useful for development and IP-based access)
+    ALLOWED_HOSTS = ['*']
+else:
+    # Production: default to localhost and common IPs
+    ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0"]
+
+# Traefik/Dokploy proxy settings
+# When running behind Traefik (Dokploy), Django needs to trust the proxy headers
+# Only enable if actually behind a proxy (can be set via env var)
+USE_X_FORWARDED_HOST = os.environ.get('USE_X_FORWARDED_HOST', 'True').lower() == 'true'
+USE_X_FORWARDED_PORT = os.environ.get('USE_X_FORWARDED_PORT', 'True').lower() == 'true'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition

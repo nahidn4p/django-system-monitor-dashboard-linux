@@ -16,10 +16,10 @@ ENV/
 *.swo
 db.sqlite3
 db.sqlite3-journal
+data/
 staticfiles/
 media/
 .DS_Store
 README.md
 DOCKER.md
 setup_cron.sh
-

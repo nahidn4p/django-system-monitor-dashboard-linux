@@ -143,8 +143,32 @@ oracle-project/
 - CPU/RAM spikes are designed to be safe and won't crash your system
 - All data is fetched in real-time from the system
 
+## Docker Deployment
+
+### Quick Start
+```bash
+docker build -t system-monitor .
+docker run -p 8000:8000 system-monitor
+```
+
+### Dokploy Deployment
+See [DOKPLOY.md](DOKPLOY.md) for detailed Dokploy deployment instructions.
+
+**Quick steps:**
+1. Push code to Git repository
+2. In Dokploy: New Application → Dockerfile
+3. Set repository URL and port 8000
+4. Deploy!
+
 ## Troubleshooting
 
+### Database Permission Error
+If you see `unable to open database file`:
+- The database is now stored in `/app/data/` directory
+- Make sure the container has write permissions
+- The Dockerfile automatically creates this directory
+
+### Cron Jobs Not Working
 If cron jobs are not working:
 1. Make sure `django-crontab` is installed
 2. Check that cron service is running: `sudo service cron status`
